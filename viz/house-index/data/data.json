@@ -1,0 +1,23 @@
+[
+    { "city": "Miami", "country": "United States", "country_code": "us", "realPriceChange": 93.1, "realRentChange": 12.7 },
+    { "city": "Tokyo", "country": "Japan", "country_code": "jp", "realPriceChange": 66.0, "realRentChange": 23.1 },
+    { "city": "Amsterdam", "country": "Netherlands", "country_code": "nl", "realPriceChange": 64.4, "realRentChange": 17.2 },
+    { "city": "Toronto", "country": "Canada", "country_code": "ca", "realPriceChange": 48.0, "realRentChange": 8.3 },
+    { "city": "Madrid", "country": "Spain", "country_code": "es", "realPriceChange": 42.4, "realRentChange": 48.0 },
+    { "city": "Zurich", "country": "Switzerland", "country_code": "ch", "realPriceChange": 42.4, "realRentChange": 23.1 },
+    { "city": "Frankfurt", "country": "Germany", "country_code": "de", "realPriceChange": 42.4, "realRentChange": 14.9 },
+    { "city": "Los Angeles", "country": "United States", "country_code": "us", "realPriceChange": 42.4, "realRentChange": -2.0 },
+    { "city": "Vancouver", "country": "Canada", "country_code": "ca", "realPriceChange": 39.7, "realRentChange": 21.9 },
+    { "city": "Munich", "country": "Germany", "country_code": "de", "realPriceChange": 30.5, "realRentChange": 18.4 },
+    { "city": "Singapore", "country": "Singapore", "country_code": "sg", "realPriceChange": 25.5, "realRentChange": 21.9 },
+    { "city": "Geneva", "country": "Switzerland", "country_code": "ch", "realPriceChange": 17.2, "realRentChange": 1.0 },
+    { "city": "Sydney", "country": "Australia", "country_code": "au", "realPriceChange": 16.1, "realRentChange": 17.2 },
+    { "city": "Dubai", "country": "UAE", "country_code": "ae", "realPriceChange": 12.7, "realRentChange": 2.0 },
+    { "city": "San Francisco", "country": "United States", "country_code": "us", "realPriceChange": 7.3, "realRentChange": -18.4 },
+    { "city": "Paris", "country": "France", "country_code": "fr", "realPriceChange": 0.0, "realRentChange": -8.6 },
+    { "city": "Milan", "country": "Italy", "country_code": "it", "realPriceChange": -4.9, "realRentChange": -3.0 },
+    { "city": "New York", "country": "United States", "country_code": "us", "realPriceChange": -4.9, "realRentChange": -7.7 },
+    { "city": "London", "country": "United Kingdom", "country_code": "gb", "realPriceChange": -10.5, "realRentChange": -11.0 },
+    { "city": "São Paulo", "country": "Brazil", "country_code": "br", "realPriceChange": -19.1, "realRentChange": -3.0 },
+    { "city": "Hong Kong", "country": "Hong Kong", "country_code": "hk", "realPriceChange": -19.1, "realRentChange": -11.0 }
+]

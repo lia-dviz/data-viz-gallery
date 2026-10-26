@@ -1,0 +1,252 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #ffffff;
+  color: #2b2123;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 80px);
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f0e6e8;
+  padding-bottom: 24px;
+}
+
+.brand-container {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+.brand-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #1b1b1b;
+}
+
+.social-links {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.social-links a {
+  color: #8c7377;
+  font-size: 20px;
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  background-color: #f5edef;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  justify-content: center;
+}
+
+.social-links a:hover {
+  color: #ff3059;
+  background-color: #fae1e6;
+  transform: translateY(-2px);
+}
+
+.content {
+  flex-grow: 1;
+}
+
+.project-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.project-card {
+  background: #ffffff;
+  border: 1px solid #f0e6e8;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  border-color: #e2d1d4;
+}
+
+.project-media {
+  width: 100%;
+  height: 260px;
+  background-color: #fcf9fa;
+  overflow: hidden;
+  position: relative;
+}
+
+.project-media a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.project-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+  display: block;
+}
+
+.project-media img.zoomable-img {
+  transition: transform 0.4s ease;
+  cursor: zoom-in;
+}
+
+.project-media img.zoomable-img:hover {
+  transform: scale(1.06);
+}
+
+.project-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.project-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.project-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.project-info h3 a {
+  color: #1b1b1b;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.project-info h3 a:hover {
+  color: #ff3059;
+}
+
+.project-info h3 span {
+  color: #2b2123;
+}
+
+.project-github-btn {
+  color: #8c7377;
+  font-size: 18px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5edef;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.project-github-btn:hover {
+  color: #ff3059;
+  background-color: #fae1e6;
+  transform: translateY(-2px);
+}
+
+.tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background-color: #faf5f6;
+  border: 1px solid #f0e6e8;
+  padding: 5px 10px;
+  font-size: 10px;
+  color: #7a6669;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tag i {
+  font-size: 13px;
+  color: #947e82;
+}
+
+.main-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 50px;
+  padding-bottom: 20px;
+  border-top: 1px solid #f0e6e8;
+  margin-top: 40px;
+}
+
+.footer-tea {
+  width: 250px;
+  height: auto;
+  opacity: 0.8;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.footer-tea:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+@media (max-width: 1024px) {
+  .project-gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .main-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+
+  .project-gallery {
+    grid-template-columns: 1fr;
+  }
+}

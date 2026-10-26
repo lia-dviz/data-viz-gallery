@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Median Age by Region</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+    <h2>Demographic Shifts: Median Age by Region</h2>
+    <p class="subtitle">This visualization highlights a clear global divide in 2024. Africa remains the youngest region,
+        while Europe and Northern America are the oldest, leaving Latin America in a demographic middle ground and
+        showing wide internal disparities across Asia and Oceania.</p>
+
+    <div class="search-container">
+        <input type="text" id="countrySearch" placeholder="Search for a country...">
+    </div>
+
+    <div id="chart" style="display: flex; justify-content: center; position: relative; margin-top: 10px;"></div>
+    <div id="tooltip"></div>
+    
+    <p class="source">Source: United Nations, World Population Prospects 2024</p>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 20px 40px;
+}
+
+h2 {
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+p.subtitle {
+    text-align: justify;
+    color: #666;
+    font-size: 14px;
+    width: 700px;
+    margin: 0 auto 40px auto;
+    line-height: 1.5;
+}
+
+.search-container {
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+#countrySearch {
+    padding: 10px 15px;
+    width: 350px;
+    border: 1px solid #ddd;
+    outline: none;
+    color: #444;
+    font-family: 'Inter', sans-serif;
+}
+
+#tooltip {
+    position: absolute;
+    opacity: 0;
+    background: white;
+    border: 1px solid #d3d3d3;
+    padding: 10px;
+    pointer-events: none;
+    font-size: 13px;
+    color: #333;
+    z-index: 100;
+    font-family: 'Inter', sans-serif;
+}
+
+.grid-line {
+    stroke: #e0e0e0;
+    stroke-dasharray: 2;
+}
+
+.continent-label {
+    font-weight: 400;
+    font-size: 14px;
+    fill: #333;
+    font-family: 'Inter', sans-serif;
+}
+
+.country-label {
+    font-size: 11px;
+    fill: #555;
+    font-family: 'Inter', sans-serif;
+    pointer-events: none;
+}
+
+.median-line {
+    stroke: #000;
+    stroke-width: 2px;
+}
+
+.median-cap {
+    stroke: #000;
+    stroke-width: 2px;
+}
+
+.median-text {
+    font-size: 12px;
+    font-weight: 700;
+    fill: #000;
+    font-family: 'Inter', sans-serif;
+}
+
+.tick text {
+    color: #666;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+}
+
+.domain {
+    display: none;
+}
+
+.highlighted {
+    stroke: #FFD700 !important;
+    stroke-width: 3.5px !important;
+    opacity: 1 !important;
+}
+
+.source {
+    text-align: center;
+    font-size: 12px;
+    color: #999;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    font-family: 'Inter', sans-serif;
+}

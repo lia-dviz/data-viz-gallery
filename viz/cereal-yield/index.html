@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cereal Yield vs Fertilizer</title>
+    <link rel="icon" type="image/png" href="assets/icon.png">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Noto+Sans+JP:wght@100..900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --owid-blue: #002147;
+            --owid-selected: #e9f2ff;
+            --owid-active-bg: #e3f2fd;
+            --owid-gray: #555;
+            --border-color: #f2f2f2;
+            --bg-sidebar: #ffffff;
+            --control-gray: #ccc;
+            --text-main: #333;
+            --text-light: #666;
+            --bar-color: rgba(0, 33, 71, 0.1);
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #ffffff;
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        .main-container {
+            width: 95%;
+            max-width: 1400px;
+            height: 90vh;
+            background: white;
+            border: 1px solid #ccc;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+        }
+
+        .left-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        header {
+            padding: 15px 30px;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .header-text {
+            flex: 1;
+        }
+
+        .header-logo {
+            height: 40px;
+            margin-left: 20px;
+        }
+
+        h1 {
+            font-family: "Noto Sans JP", sans-serif;
+            margin: 0;
+            font-size: 1.6rem;
+            color: var(--text-main);
+        }
+
+        .description {
+            color: var(--owid-gray);
+            font-size: 0.9rem;
+            margin-top: 6px;
+            margin-bottom: 15px;
+        }
+
+        .toggle-view {
+            display: inline-flex;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .toggle-btn {
+            padding: 4px 12px;
+            background: white;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 400;
+            border-right: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--owid-gray);
+            transition: background 0.2s;
+        }
+
+        .toggle-btn:last-child {
+            border-right: none;
+        }
+
+        .toggle-btn.active {
+            background: var(--owid-active-bg);
+            color: var(--owid-blue);
+        }
+
+        .toggle-btn i {
+            font-size: 0.8rem;
+        }
+
+        #content-wrapper {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        #visualization {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        #chart-container {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        #table-container {
+            display: none;
+            overflow-y: auto;
+            padding: 0;
+            flex: 1;
+            background: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            text-align: left;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            background: #eee;
+            z-index: 5;
+        }
+
+        th {
+            padding: 12px 15px;
+            border-bottom: 2px solid var(--border-color);
+            font-weight: 700;
+            color: #444;
+        }
+
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fcfcfc;
+        }
+
+        tr:hover {
+            background-color: var(--owid-selected);
+        }
+
+        #sidebar {
+            width: 320px;
+            background: var(--bg-sidebar);
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .sidebar-header {
+            padding: 15px;
+            font-weight: bold;
+            font-size: 0.7rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-section {
+            padding: 12px 15px
+        }
+
+        .filter-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 6px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: #fff;
+            padding: 8px 8px 8px 32px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+            font-size: 0.85rem;
+            color: #333;
+        }
+
+        .select-input {
+            width: 100%;
+            background-color: #fff;
+            padding: 8px 8px 8px 32px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+            font-size: 0.85rem;
+            appearance: none;
+            cursor: pointer;
+            color: var(--owid-gray);
+        }
+
+        .select-wrapper::after {
+            content: "\f0d7";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 0.8rem;
+            pointer-events: none;
+        }
+
+        #entity-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .entity-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            padding: 8px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background 0.1s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .entity-item:hover {
+            background: #f0f0f0;
+        }
+
+        .entity-item.is-selected {
+            background: var(--owid-selected);
+            font-weight: 700;
+        }
+
+        .entity-bar {
+            position: absolute;
+            left: 0;
+            top: 2px;
+            bottom: 2px;
+            background-color: var(--bar-color);
+            z-index: -1;
+            transition: width 0.3s ease;
+            pointer-events: none;
+        }
+
+        .entity-info {
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .entity-item input {
+            margin-right: 10px;
+            flex-shrink: 0;
+            accent-color: #002147;
+        }
+
+        .entity-name {
+            z-index: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .entity-value {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            z-index: 1;
+            margin-left: 5px;
+        }
+
+        #footer {
+            height: 50px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 12px;
+            background: #fff;
+        }
+
+        #play-btn {
+            background: #eee;
+            color: #5b5b5b;
+            width: 26px;
+            border: none;
+            outline: none;
+            height: 26px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+            border-radius: 2px;
+        }
+
+        #play-btn:hover {
+            background: #e0e0e0;
+        }
+
+        #year-display {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            min-width: 45px;
+        }
+
+        .max-year-label {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        #timeline {
+            flex: 1;
+            cursor: pointer;
+            -webkit-appearance: none;
+            background: transparent;
+            height: 20px;
+        }
+
+        #timeline:focus {
+            outline: none;
+        }
+
+        #timeline::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 2px;
+            background: var(--control-gray);
+            border-radius: 1px;
+        }
+
+        #timeline::-moz-range-track {
+            width: 100%;
+            height: 2px;
+            background: var(--control-gray);
+            border-radius: 1px;
+        }
+
+        #timeline::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 14px;
+            width: 14px;
+            border-radius: 50%;
+            background: #002147;
+            cursor: pointer;
+            margin-top: -6px;
+            border: none;
+        }
+
+        #timeline::-moz-range-thumb {
+            height: 14px;
+            width: 14px;
+            border-radius: 50%;
+            background: #002147;
+            cursor: pointer;
+            border: none;
+        }
+
+        .sources-footer {
+            padding: 10px 20px;
+            background: #ffffff;
+            font-size: 0.75rem;
+            color: var(--owid-gray);
+            line-height: 1.4;
+        }
+
+        .sources-footer a {
+            color: #002147;
+            text-decoration: none;
+            border-bottom: 1px solid #002147;
+        }
+
+        .dot {
+            stroke: #333;
+            stroke-width: 0.5px;
+            cursor: pointer;
+            transition: r 0.2s, opacity 0.2s;
+        }
+
+        .grid line {
+            stroke: #ddd;
+            stroke-dasharray: 2, 2;
+        }
+
+        .country-label {
+            font-size: 10px;
+            font-weight: 700;
+            pointer-events: none;
+            text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, -1px 1px 0 #fff;
+        }
+
+        .legend-item {
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .legend-item:hover {
+            opacity: 0.7;
+        }
+
+        .legend-text {
+            font-size: 10px;
+            fill: var(--text-light);
+        }
+
+        .legend-item.active-filter text {
+            font-weight: 700;
+            fill: #000;
+        }
+
+        .axis-label {
+            font-size: 12px;
+            fill: #888;
+        }
+
+        .tick text {
+            fill: var(--text-light);
+            font-size: 10px;
+        }
+
+        #tooltip {
+            position: absolute;
+            background: #ffffff;
+            border: 1px solid #e6e7e8;
+            padding: 12px 16px;
+            pointer-events: none;
+            display: none;
+            z-index: 100;
+            border-radius: 3px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-family: 'Lato', sans-serif;
+            min-width: 220px;
+            max-width: 320px;
+            text-align: left;
+            box-sizing: border-box;
+            transition: left 0.1s ease, top 0.1s ease;
+        }
+
+        .tooltip-header {
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .tooltip-country {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .tooltip-year {
+            font-size: 14px;
+            color: #666;
+            font-weight: 400;
+        }
+
+        .tooltip-item {
+            margin-top: 10px;
+        }
+
+        .tooltip-label {
+            font-size: 12px;
+            color: #666;
+            display: block;
+            line-height: 1.4;
+            margin-bottom: 2px;
+        }
+
+        .tooltip-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .tooltip-unit {
+            font-size: 13px;
+            font-weight: 400;
+            color: #666;
+            margin-left: 2px;
+        }
+
+        .tooltip-divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 10px 0;
+            width: 100%;
+            border: none;
+        }
+
+        .tooltip-region-val {
+            font-size: 14px;
+            font-weight: 400;
+            color: #333;
+        }
+
+        @media (max-width: 900px) {
+            #sidebar {
+                width: 220px;
+            }
+
+            h1 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-container">
+        <div class="left-content">
+            <header>
+                <div class="header-text">
+                    <h1>Cereal yield vs. fertilizer use</h1>
+                    <p class="description">This chart explores the critical relationship between agricultural inputs
+                        (specifically nitrogen fertilizer) and food productivity (cereal yields) across different
+                        countries and time periods.</p>
+                    <div class="toggle-view">
+                        <button class="toggle-btn active" id="btn-chart">
+                            <i class="fa-solid fa-chart-line"></i> Chart
+                        </button>
+                        <button class="toggle-btn" id="btn-table">
+                            <i class="fa-solid fa-table"></i> Table
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div id="content-wrapper">
+                <div id="visualization">
+                    <div id="chart-container">
+                        <div id="tooltip"></div>
+                        <svg id="canvas"></svg>
+                    </div>
+                    <div id="table-container">
+                        <table id="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Country/Entity</th>
+                                    <th>Year</th>
+                                    <th>Yield (t/ha)</th>
+                                    <th>Fertilizer (kg/ha)</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="footer">
+                <button id="play-btn">▶</button>
+                <span id="year-display">1961</span>
+                <input type="range" id="timeline" min="1961" max="2022" value="1961" step="1">
+                <span class="max-year-label">2022</span>
+            </div>
+
+            <div class="sources-footer">
+                Data source: Food and Agriculture Organization of the United Nations and OWID.
+            </div>
+        </div>
+
+        <div id="sidebar">
+            <div class="sidebar-header">Select countries and regions</div>
+            <div class="sidebar-section">
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" class="search-input" id="search" placeholder="Search for a country">
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="input-wrapper select-wrapper">
+                    <i class="fa-solid fa-arrow-up-wide-short"></i>
+                    <select id="sort-select" class="select-input">
+                        <option value="alpha">Alphabetical</option>
+                        <option value="yield">Cereal Yield</option>
+                        <option value="nitrogen" selected>Nitrogen Use</option>
+                    </select>
+                </div>
+            </div>
+            <div id="entity-list"></div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const margin = { top: 40, right: 160, bottom: 80, left: 70 };
+            const chartDiv = document.getElementById("chart-container");
+
+            let width = chartDiv.clientWidth - margin.left - margin.right;
+            let height = chartDiv.clientHeight - margin.top - margin.bottom;
+
+            const COL_X = "Nutrient nitrogen N (total) | 00003102 || Use per area of cropland | 005159 || kilograms per hectare";
+            const COL_Y = "Cereals | 00001717 || Yield | 005412 || tonnes per hectare";
+            const COL_NAME = "Entity";
+            const COL_YEAR = "Year";
+            const COL_REGION = "World region according to OWID";
+
+            const regionColors = {
+                "Africa": "#ea8b7b", "Asia": "#a05961", "Europe": "#7088b0",
+                "North America": "#b577b0", "Oceania": "#60bbc8", "South America": "#339d98", "Default": "#666"
+            };
+            const orderedRegions = ["Africa", "Asia", "Europe", "North America", "Oceania", "South America"];
+
+            let dataset = [];
+            let currentYear = 1961;
+            let selectedEntities = new Set();
+            let activeRegionFilter = null;
+            let isPlaying = false;
+            let timer;
+
+            const svg = d3.select("#canvas")
+                .attr("width", "100%").attr("height", "100%")
+                .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+                .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const xScale = d3.scaleLog().domain([0.1, 1000]).range([0, width]);
+            const yScale = d3.scaleLog().domain([0.1, 20]).range([height, 0]);
+
+            function normalizeValue(val) {
+                let num = parseFloat(val);
+                return (!isNaN(num) && num > 40) ? num / 1000 : num;
+            }
+
+            const grid = svg.append("g");
+            const xAxisGrid = grid.append("g").attr("class", "grid").attr("transform", `translate(0,${height})`);
+            const yAxisGrid = grid.append("g").attr("class", "grid");
+
+            const xAxis = svg.append("g").attr("class", "x-axis").attr("transform", `translate(0,${height})`);
+            const yAxis = svg.append("g").attr("class", "y-axis");
+
+            const yLabel = svg.append("text").attr("class", "axis-label").attr("x", -margin.left + 20).attr("y", -20).attr("text-anchor", "start").text("Cereal yield (tonnes per hectare)");
+            const xLabel = svg.append("text").attr("class", "axis-label").attr("text-anchor", "middle").text("Nitrogen fertilizer use (kilograms per hectare)");
+
+            const legend = svg.append("g").attr("class", "legend-group");
+            const dotsGroup = svg.append("g");
+            const labelsGroup = svg.append("g");
+
+            d3.csv("data/cereal-crop-yield-vs-fertilizer.csv").then(data => {
+                dataset = data.map(d => ({ ...d, [COL_YEAR]: +d[COL_YEAR], [COL_X]: +d[COL_X], [COL_Y]: normalizeValue(d[COL_Y]), region: d[COL_REGION] || "Default" }))
+                    .filter(d => d[COL_X] >= 0.1 && d[COL_Y] >= 0.1);
+                renderAxes();
+                updateChart(currentYear);
+            });
+
+            function renderAxes() {
+                xScale.range([0, width]);
+                yScale.range([height, 0]);
+                xAxisGrid.call(d3.axisBottom(xScale).tickValues([0.1, 1, 10, 100, 1000]).tickSize(-height).tickFormat("")).select(".domain").remove();
+                yAxisGrid.call(d3.axisLeft(yScale).tickValues([0.1, 1, 10]).tickSize(-width).tickFormat("")).select(".domain").remove();
+                xAxis.call(d3.axisBottom(xScale).tickValues([0.1, 1, 10, 100, 1000]).tickFormat(d => `${d} kg`)).select(".domain").remove();
+                yAxis.call(d3.axisLeft(yScale).tickValues([0.1, 1, 10]).tickFormat(d => `${d} t`)).select(".domain").remove();
+                xLabel.attr("x", width / 2).attr("y", height + 50);
+                legend.attr("transform", `translate(${width + 30}, 20)`);
+                legend.selectAll("*").remove();
+
+                const legendRows = legend.selectAll(".legend-item").data(orderedRegions).enter().append("g").attr("class", "legend-item").attr("transform", (d, i) => `translate(0, ${i * 22})`)
+                    .on("click", (e, d) => { activeRegionFilter = (activeRegionFilter === d) ? null : d; updateChart(currentYear); });
+                legendRows.append("rect").attr("width", 10).attr("height", 10).attr("fill", d => regionColors[d]).attr("rx", 0);
+                legendRows.append("text").attr("class", "legend-text").attr("x", 18).attr("y", 9).text(d => d);
+            }
+
+            function updateChart(year) {
+                currentYear = year;
+                d3.select("#year-display").text(year);
+                d3.select("#timeline").property("value", year);
+
+                const yearData = dataset.filter(d => d[COL_YEAR] === year);
+                const hasSelection = selectedEntities.size > 0;
+
+                legend.selectAll(".legend-item").classed("active-filter", d => d === activeRegionFilter).style("opacity", d => (!activeRegionFilter || d === activeRegionFilter) ? 1 : 0.3);
+
+                const regionLeaders = new Set();
+                const regionsInYear = d3.groups(yearData, d => d.region);
+                regionsInYear.forEach(([region, members]) => {
+                    if (region !== "Default") {
+                        const leader = members.reduce((prev, current) => (prev[COL_X] > current[COL_X]) ? prev : current);
+                        regionLeaders.add(leader[COL_NAME]);
+                    }
+                });
+
+                const dots = dotsGroup.selectAll(".dot").data(yearData, d => d[COL_NAME]);
+                dots.exit().remove();
+                const dotsEnter = dots.enter().append("circle").attr("class", "dot")
+                    .attr("cx", d => xScale(d[COL_X])).attr("cy", d => d[COL_Y] > 20 ? yScale(20) : yScale(d[COL_Y]))
+                    .on("mouseover", showTooltip).on("mousemove", moveTooltip).on("mouseleave", hideTooltip)
+                    .on("click", (e, d) => toggleEntity(d[COL_NAME]));
+
+                dots.merge(dotsEnter).transition().duration(isPlaying ? 350 : 500).ease(d3.easeLinear)
+                    .attr("cx", d => xScale(d[COL_X])).attr("cy", d => d[COL_Y] > 20 ? yScale(20) : yScale(d[COL_Y]))
+                    .attr("r", d => selectedEntities.has(d[COL_NAME]) ? 6 : 4)
+                    .attr("fill", d => regionColors[d.region] || regionColors["Default"])
+                    .style("opacity", d => {
+                        if (activeRegionFilter) return d.region === activeRegionFilter ? 1 : 0.05;
+                        if (hasSelection) return selectedEntities.has(d[COL_NAME]) ? 1 : 0.15;
+                        return 0.7;
+                    });
+
+                const labelData = yearData.filter(d => {
+                    if (activeRegionFilter) return d.region === activeRegionFilter && (regionLeaders.has(d[COL_NAME]) || selectedEntities.has(d[COL_NAME]));
+                    return regionLeaders.has(d[COL_NAME]) || selectedEntities.has(d[COL_NAME]);
+                });
+
+                const labels = labelsGroup.selectAll(".country-label").data(labelData, d => d[COL_NAME]);
+                labels.exit().remove();
+                const labelsEnter = labels.enter().append("text").attr("class", "country-label").attr("x", d => xScale(d[COL_X]) + 8).attr("y", d => (d[COL_Y] > 20 ? yScale(20) : yScale(d[COL_Y])) + 4);
+
+                labels.merge(labelsEnter).transition().duration(isPlaying ? 350 : 500)
+                    .attr("x", d => xScale(d[COL_X]) + 8).attr("y", d => (d[COL_Y] > 20 ? yScale(20) : yScale(d[COL_Y])) + 4)
+                    .text(d => d[COL_NAME]).style("fill", d => regionColors[d.region] || "#666").style("opacity", 1);
+
+                updateSidebar(yearData);
+                updateTable(yearData);
+            }
+
+            function toggleEntity(name) {
+                selectedEntities.has(name) ? selectedEntities.delete(name) : selectedEntities.add(name);
+                updateChart(currentYear);
+            }
+
+            function updateSidebar(yearData) {
+                const search = d3.select("#search").property("value").toLowerCase();
+                const sortType = d3.select("#sort-select").property("value");
+                let entities = yearData.filter(d => d[COL_NAME].toLowerCase().includes(search));
+
+                if (sortType === "alpha") entities.sort((a, b) => d3.ascending(a[COL_NAME], b[COL_NAME]));
+                else if (sortType === "yield") entities.sort((a, b) => d3.descending(a[COL_Y], b[COL_Y]));
+                else if (sortType === "nitrogen") entities.sort((a, b) => d3.descending(a[COL_X], b[COL_X]));
+
+                const maxValYield = d3.max(yearData, d => d[COL_Y]);
+                const maxValNitrogen = d3.max(yearData, d => d[COL_X]);
+                const barScaleYield = d3.scaleLinear().domain([0, maxValYield]).range([0, 100]);
+                const barScaleNitrogen = d3.scaleLinear().domain([0, maxValNitrogen]).range([0, 100]);
+
+                const list = d3.select("#entity-list");
+
+                const items = list.selectAll(".entity-item").data(entities, d => d[COL_NAME]);
+
+                items.exit().remove();
+
+                const enter = items.enter().append("label").attr("class", "entity-item");
+                enter.append("div").attr("class", "entity-bar");
+                const info = enter.append("div").attr("class", "entity-info");
+                info.append("input").attr("type", "checkbox");
+                info.append("span").attr("class", "entity-name");
+                enter.append("span").attr("class", "entity-value");
+
+                const merge = enter.merge(items);
+
+                merge.order();
+
+                merge.classed("is-selected", d => selectedEntities.has(d[COL_NAME]));
+                merge.select("input").property("checked", d => selectedEntities.has(d[COL_NAME]))
+                    .on("change", (e, d) => toggleEntity(d[COL_NAME]));
+
+                merge.select(".entity-name").text(d => d[COL_NAME]);
+                merge.select(".entity-bar").style("width", d => {
+                    if (sortType === "yield") return barScaleYield(d[COL_Y]) + "%";
+                    if (sortType === "nitrogen") return barScaleNitrogen(d[COL_X]) + "%";
+                    return "0%";
+                });
+                merge.select(".entity-value").text(d => {
+                    if (sortType === "yield") return d[COL_Y].toFixed(2) + " t";
+                    if (sortType === "nitrogen") return d[COL_X].toFixed(0) + " kg";
+                    return "";
+                });
+            }
+
+            function updateTable(data) {
+                const tbody = d3.select("#data-table tbody");
+                tbody.selectAll("*").remove();
+                let tableData = selectedEntities.size > 0 ? data.filter(d => selectedEntities.has(d[COL_NAME])) : data;
+
+                const sortType = d3.select("#sort-select").property("value");
+                if (sortType === "yield") tableData.sort((a, b) => b[COL_Y] - a[COL_Y]);
+                else if (sortType === "nitrogen") tableData.sort((a, b) => b[COL_X] - a[COL_X]);
+                else tableData.sort((a, b) => d3.ascending(a[COL_NAME], b[COL_NAME]));
+
+                tableData.forEach(d => {
+                    const tr = tbody.append("tr");
+                    tr.append("td").text(d[COL_NAME]);
+                    tr.append("td").text(d[COL_YEAR]);
+                    tr.append("td").text(d[COL_Y].toFixed(3));
+                    tr.append("td").text(d[COL_X].toFixed(1));
+                });
+            }
+
+            const tooltip = d3.select("#tooltip");
+            function showTooltip(e, d) {
+                tooltip.style("display", "block").html(`
+            <div class="tooltip-header"><span class="tooltip-country">${d[COL_NAME]}</span><span class="tooltip-year">${d[COL_YEAR]}</span></div>
+            <div class="tooltip-item"><span class="tooltip-label">Nitrogen fertilizer use</span><span class="tooltip-value">${d[COL_X].toFixed(1)} <span class="tooltip-unit">kilograms per hectare</span></span></div>
+            <div class="tooltip-divider"></div>
+            <div class="tooltip-item"><span class="tooltip-label">Cereal yield</span><span class="tooltip-value">${d[COL_Y].toFixed(2)} <span class="tooltip-unit">tonnes per hectare</span></span></div>
+            <div class="tooltip-divider"></div>
+            <div class="tooltip-item"><span class="tooltip-label">World region</span><span class="tooltip-region-val">${d.region}</span></div>
+        `);
+            }
+
+            function moveTooltip(e) {
+                const container = chartDiv;
+                const tWidth = tooltip.node().offsetWidth;
+                const tHeight = tooltip.node().offsetHeight;
+                const [x, y] = d3.pointer(e, container);
+                let left = x + 20; let top = y + 20;
+                if (left + tWidth > container.clientWidth) left = x - tWidth - 20;
+                if (top + tHeight > container.clientHeight) top = y - tHeight - 20;
+                tooltip.style("left", left + "px").style("top", top + "px");
+            }
+
+            function hideTooltip() { tooltip.style("display", "none"); }
+
+            d3.select("#timeline").on("input", function () { isPlaying = false; d3.select("#play-btn").text("▶"); updateChart(+this.value); });
+            d3.select("#sort-select").on("change", () => updateChart(currentYear));
+            d3.select("#search").on("input", () => updateSidebar(dataset.filter(d => d[COL_YEAR] === currentYear)));
+
+            d3.select("#play-btn").on("click", function () {
+                isPlaying = !isPlaying;
+                this.innerHTML = isPlaying ? "❚❚" : "▶";
+                if (isPlaying) {
+                    timer = setInterval(() => {
+                        currentYear = currentYear >= 2022 ? 1961 : currentYear + 1;
+                        updateChart(currentYear);
+                    }, 400);
+                } else clearInterval(timer);
+            });
+
+            d3.select("#btn-chart").on("click", () => { d3.select("#chart-container").style("display", "block"); d3.select("#table-container").style("display", "none"); d3.select("#btn-chart").classed("active", true); d3.select("#btn-table").classed("active", false); });
+            d3.select("#btn-table").on("click", () => { d3.select("#chart-container").style("display", "none"); d3.select("#table-container").style("display", "block"); d3.select("#btn-table").classed("active", true); d3.select("#btn-chart").classed("active", false); });
+
+            window.addEventListener("resize", () => {
+                width = chartDiv.clientWidth - margin.left - margin.right;
+                height = chartDiv.clientHeight - margin.top - margin.bottom;
+                d3.select("#canvas").attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`);
+                renderAxes();
+                updateChart(currentYear);
+            });
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panorama das Exportações</title>
+    <link rel="icon" type="image/png" href="img/icon.png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Noto Sans JP', sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f4f4f4;
+            overflow: hidden;
+        }
+
+        .main-header {
+            flex: 0 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px;
+            border-bottom: 2px solid #eee;
+            background-color: #ffffff;
+            color: #000000;
+            z-index: 10;
+        }
+
+        .header-info h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-family: "Roboto", sans-serif;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        .title-black {
+            color: #000000;
+            display: block;
+        }
+
+        .title-green {
+            color: #009739;
+            display: block;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo {
+            height: 45px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .header-logo.error {
+            display: none;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 380px;
+            background-color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.05);
+            overflow-y: auto;
+            z-index: 5;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 5px;
+        }
+
+        h3.chart-title {
+            font-size: 13px;
+            color: #444;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: 800;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .chart-instruction {
+            font-size: 11px;
+            color: #777;
+            margin-top: -5px;
+            margin-bottom: 10px;
+            font-style: italic;
+            line-height: 1.2;
+            padding-left: 2px;
+        }
+
+        .ranking-unit-info {
+            font-size: 10px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .ranking-table tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: 0.2s;
+        }
+
+        .ranking-table tr.hidden-row {
+            display: none;
+        }
+
+        .ranking-table tr.selected:not(.row-fixed-style) {
+            background-color: #e8f5e9;
+            border-left: 4px solid #009739;
+        }
+
+        .ranking-table td {
+            padding: 8px 4px;
+            vertical-align: middle;
+        }
+
+        .row-fixed-style {
+            background-color: #e8f5e9 !important;
+            border-left: 4px solid #004b23 !important;
+        }
+
+        .expand-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            color: #004b23;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            background: #f9f9f9;
+            border: none;
+            border-top: 1px solid #eee;
+            margin-top: 5px;
+        }
+
+        .rank-num {
+            color: #ff6b6b;
+            font-weight: bold;
+            width: 15px;
+        }
+
+        .flag-icon {
+            width: 20px;
+            height: 14px;
+            margin-right: 5px;
+            vertical-align: middle;
+            border: 1px solid #eee;
+        }
+
+        .bar-container {
+            width: 80px;
+            background: #eee;
+            height: 10px;
+            display: inline-block;
+            border-radius: 2px;
+            overflow: hidden;
+            vertical-align: middle;
+        }
+
+        .bar-fill {
+            height: 100%;
+            display: block;
+        }
+
+        .val-text {
+            font-weight: bold;
+            color: #333;
+            margin-left: 4px;
+        }
+
+        .trend-up {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .trend-neutral {
+            color: #b0bec5;
+        }
+
+        .trend-down {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        #chart-container {
+            flex-grow: 1;
+            background-color: #eef1f3;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .country {
+            fill: #ffffff;
+            stroke: #eeeeee;
+            stroke-width: 1px;
+            transition: fill 0.3s ease;
+        }
+
+        .country.active-country {
+            fill: #dadada !important;
+            stroke: #fff;
+            stroke-width: 1.5px;
+        }
+
+        .flow-line {
+            fill: none;
+            stroke-linecap: round;
+            opacity: 0.6;
+        }
+
+        .flow-line.dimmed {
+            opacity: 0.05;
+            transition: 0.4s;
+        }
+
+        .flow-line.highlight {
+            opacity: 1;
+            stroke-width: 5px !important;
+            transition: 0.4s;
+        }
+
+        .particle {
+            fill: #fff;
+            pointer-events: none;
+        }
+
+        .source-circle {
+            fill: #009739;
+            stroke: rgba(0, 151, 57, 0.3);
+            stroke-width: 10px;
+        }
+
+        .source-label {
+            fill: white;
+            font-weight: bold;
+            font-size: 13px;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+
+        .region-name {
+            font-size: 11px;
+            font-weight: bold;
+            fill: #333;
+            text-shadow: 1px 1px 0 #fff;
+            opacity: 0;
+        }
+
+        .region-value {
+            font-size: 10px;
+            fill: #004b23;
+            font-weight: bold;
+            text-shadow: 1px 1px 0 #fff;
+            opacity: 0;
+        }
+
+        .product-bar {
+            fill: #009739;
+            cursor: pointer;
+        }
+
+        .product-label {
+            font-size: 11px;
+            fill: #444;
+            font-weight: 700;
+        }
+
+        .product-value {
+            font-size: 10px;
+            fill: #666;
+            font-weight: 500;
+        }
+
+        .chart-footer {
+            font-size: 10px;
+            color: #888;
+            margin-top: 15px;
+            line-height: 1.4;
+        }
+
+        .chart-footer a {
+            color: #888;
+            text-decoration: underline;
+        }
+
+        #tooltip {
+            position: absolute;
+            visibility: hidden;
+            background: white;
+            border: 1px solid #666;
+            padding: 8px;
+            font-size: 11px;
+            color: #333;
+            border-radius: 4px;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 250px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="tooltip"></div>
+    <header class="main-header">
+        <div class="header-info">
+            <h1>
+                <span class="title-black">Panorama de</span>
+                <span class="title-green">Exportações</span>
+            </h1>
+        </div>
+        <div class="logo-container">
+        </div>
+    </header>
+    <div class="content-wrapper">
+        <aside class="sidebar">
+            <div class="card">
+                <h3 class="chart-title">Principais Destinos de Exportação</h3>
+                <div id="ranking-container"></div>
+                <div class="ranking-unit-info">Valores em US$ Bilhões</div>
+            </div>
+            <div id="product-chart-container" class="card">
+                <h3 class="chart-title" id="product-title">Top 5 Produtos</h3>
+                <p class="chart-instruction">Selecione um país na lista para ver o top 5 por país:</p>
+                <svg id="product-svg" width="340" height="300"></svg>
+                <footer class="chart-footer">
+                    Fonte: Comex Stat, Exportações 2024<br>
+                    Visualização criada por <a href="https://lia-sr.gitlab.io/portfolio/" target="_blank">Lia</a>
+                </footer>
+            </div>
+        </aside>
+        <main id="chart-container"></main>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script>
+        let currentSelectedCountry = "Mundo";
+        const tooltip = d3.select("#tooltip");
+
+        const exportData = {
+            "Mundo": [{ p: "Soja", v: 52.1 }, { p: "Óleos brutos de petróleo", v: 42.5 }, { p: "Minério de ferro", v: 30.2 }, { p: "Açúcares", v: 18.9 }, { p: "Carne bovina", v: 11.4 }],
+            "China": [{ p: "Soja", v: 31.49 }, { p: "Óleos brutos de petróleo", v: 19.96 }, { p: "Minério de ferro", v: 19.88 }, { p: "Carne bovina", v: 5.98 }, { p: "Celulose", v: 4.62 }],
+            "Estados Unidos": [{ p: "Óleos brutos de petróleo", v: 5.83 }, { p: "Aço semi-acabado", v: 3.54 }, { p: "Aeronaves", v: 2.69 }, { p: "Café", v: 1.54 }, { p: "Ferro-gusa", v: 1.25 }],
+            "Argentina": [{ p: "Automóveis", v: 2.15 }, { p: "Veículos de carga", v: 1.63 }, { p: "Autopeças", v: 1.23 }, { p: "Energia elétrica", v: 0.84 }, { p: "Minério de ferro", v: 0.52 }],
+            "Holanda": [{ p: "Óleos brutos de petróleo", v: 3.18 }, { p: "Farelo de soja", v: 1.52 }, { p: "Celulose", v: 1.12 }, { p: "Ferro-gusa", v: 0.65 }, { p: "Minério de ferro", v: 0.45 }],
+            "Espanha": [{ p: "Óleos brutos de petróleo", v: 4.82 }, { p: "Soja", v: 1.05 }, { p: "Milho", v: 0.78 }, { p: "Minério de ferro", v: 0.42 }, { p: "Celulose", v: 0.31 }],
+            "Cingapura": [{ p: "Óleos combustíveis", v: 3.72 }, { p: "Óleos brutos de petróleo", v: 2.12 }, { p: "Plataformas", v: 0.95 }, { p: "Carne de aves", v: 0.18 }, { p: "Alimentos", v: 0.12 }],
+            "México": [{ p: "Automóveis", v: 0.85 }, { p: "Autopeças", v: 0.62 }, { p: "Ferro/Aço", v: 0.48 }, { p: "Motores", v: 0.35 }, { p: "Soja", v: 0.29 }],
+            "Chile": [{ p: "Óleos brutos de petróleo", v: 1.15 }, { p: "Carne bovina", v: 0.45 }, { p: "Automóveis", v: 0.38 }, { p: "Caminhões", v: 0.32 }, { p: "Milho", v: 0.28 }],
+            "Canadá": [{ p: "Óxido de alumínio", v: 1.45 }, { p: "Açúcares", v: 0.62 }, { p: "Ouro", v: 0.58 }, { p: "Aeronaves", v: 0.32 }, { p: "Café", v: 0.21 }],
+            "Alemanha": [{ p: "Café não torrado", v: 1.28 }, { p: "Farelo de soja", v: 0.82 }, { p: "Minério de ferro", v: 0.75 }, { p: "Minério de cobre", v: 0.42 }, { p: "Celulose", v: 0.35 }]
+        };
+
+        const rankingData = [
+            { rank: "", country: "Mundo", value: 339.7, trend: "", flag: "un", color: "#004b23" },
+            { rank: 1, country: "China", value: 94.4, trend: "", flag: "cn", color: "#ff4500", coords: [105, 35], labelPos: "neutral" },
+            { rank: 2, country: "Estados Unidos", value: 40.3, trend: "", flag: "us", color: "#005a87", coords: [-100, 40], labelPos: "neutral" },
+            { rank: 3, country: "Argentina", value: 13.8, trend: "", flag: "ar", color: "#6ec6ff", coords: [-65, -34], labelPos: "neutral" },
+            { rank: 4, country: "Holanda", value: 11.8, trend: "", flag: "nl", color: "#ff9f43", coords: [5.3, 52.1], labelPos: "top" },
+            { rank: 5, country: "Espanha", value: 9.9, trend: "+2%", flag: "es", color: "#ff9f43", coords: [-3.7, 40.4], labelPos: "left" },
+            { rank: 6, country: "Cingapura", value: 7.9, trend: "+2%", flag: "sg", color: "#ff9f43", coords: [103.8, 1.3], labelPos: "bottom" },
+            { rank: 7, country: "México", value: 7.8, trend: "-2%", flag: "mx", color: "#ff9f43", coords: [-102, 23], labelPos: "left" },
+            { rank: 8, country: "Chile", value: 6.7, trend: "-2%", flag: "cl", color: "#ff9f43", coords: [-71, -33], labelPos: "left" },
+            { rank: 9, country: "Canadá", value: 6.3, trend: "+1%", flag: "ca", color: "#ff9f43", coords: [-106, 56], labelPos: "top" },
+            { rank: 10, country: "Alemanha", value: 5.9, trend: "+1%", flag: "de", color: "#ff9f43", coords: [10.4, 51.1], labelPos: "right" }
+        ];
+
+        const isoMap = { "China": "156", "Estados Unidos": "840", "Argentina": "032", "Holanda": "528", "Espanha": "724", "Cingapura": "702", "México": "484", "Chile": "152", "Canadá": "124", "Alemanha": "276", "Brasil": "076" };
+        const mapWidth = 960, mapHeight = 550;
+        const svgMap = d3.select("#chart-container").append("svg").attr("viewBox", [0, 0, mapWidth, mapHeight]);
+        const projection = d3.geoNaturalEarth1().scale(230).translate([mapWidth / 1.9, mapHeight / 1.65]);
+        const pathMap = d3.geoPath().projection(projection);
+        const strokeScale = d3.scaleLinear().domain([0, 100]).range([1, 12]);
+
+        const defs = svgMap.append("defs");
+        defs.append("marker").attr("id", "arrow").attr("viewBox", "0 -5 10 10").attr("refX", 8).attr("refY", 0).attr("markerWidth", 4).attr("markerHeight", 4).attr("orient", "auto").append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "#009739");
+
+        d3.json("https://unpkg.com/world-atlas@2/countries-110m.json").then(world => {
+            svgMap.append("g").selectAll("path")
+                .data(topojson.feature(world, world.objects.countries).features)
+                .join("path")
+                .attr("class", "country")
+                .attr("id", d => "iso-" + d.id)
+                .attr("d", pathMap);
+            renderRanking();
+            drawFlows();
+            updateProductChart("Mundo");
+        });
+
+        function renderRanking() {
+            const container = d3.select("#ranking-container");
+            container.selectAll("*").remove();
+            const table = container.append("table").attr("class", "ranking-table");
+            const maxVal = d3.max(rankingData.slice(1), d => d.value);
+            const rows = table.selectAll("tr").data(rankingData).enter().append("tr")
+                .classed("row-fixed-style", d => d.country === "Mundo")
+                .classed("selected", d => d.country === "Mundo")
+                .classed("hidden-row", (d, i) => i > 5)
+                .on("click", function (event, d) {
+                    d3.selectAll("tr").classed("selected", false);
+                    d3.select(this).classed("selected", true);
+                    currentSelectedCountry = d.country;
+                    updateProductChart(d.country);
+                    highlightFlow(d.country);
+                    highlightCountryOnMap(d.country);
+                })
+                .on("mouseover", function (event, d) {
+                    if (d.country === "Mundo") return;
+                    tooltip.style("visibility", "visible")
+                        .html(`Em 2024 o Brasil exportou <strong>$${d.value} bn</strong> para <strong>${d.country}</strong>.`);
+                })
+                .on("mousemove", function (event) {
+                    tooltip.style("top", (event.pageY - 10) + "px").style("left", (event.pageX + 10) + "px");
+                })
+                .on("mouseout", function () { tooltip.style("visibility", "hidden"); });
+
+            rows.append("td").attr("class", "rank-num").text(d => d.rank);
+            rows.append("td").html(d => d.country === "Mundo" ? `<span style="color: #666; font-style: italic;">Selecione um País</span>` : `<img src="https://flagcdn.com/w40/${d.flag}.png" class="flag-icon"> ${d.country}`);
+            rows.append("td").html(d => {
+                if (d.country === "Mundo") return `<span style="color: #004b23; font-weight: bold; cursor: pointer;">LIMPAR SELEÇÃO</span>`;
+                const scale = d3.scaleSqrt().domain([0, maxVal]).range([0, 100]);
+                return `<div class="bar-container"><div class="bar-fill" style="width:${scale(d.value)}%; background-color:${d.color};"></div></div><span class="val-text">${d.value}</span>`;
+            });
+            rows.append("td").html(d => {
+                if (d.country === "Mundo") return "";
+                if (d.trend.includes("+")) return `<span class="trend-up">▲ ${d.trend}</span>`;
+                if (d.trend.includes("-")) return `<span class="trend-down">▼ ${d.trend}</span>`;
+                return `<span class="trend-neutral">●</span>`;
+            });
+            container.append("button").attr("class", "expand-btn").text("Expandir tabela ▼").on("click", function () {
+                const isExpanded = d3.select(this).text().includes("Recolher");
+                table.selectAll("tr.hidden-row").style("display", isExpanded ? "none" : "table-row");
+                d3.select(this).text(isExpanded ? "Expandir tabela ▼" : "Recolher tabela ▲");
+            });
+        }
+
+        function highlightCountryOnMap(countryName) {
+            d3.selectAll(".country").classed("active-country", false);
+            const isoCode = isoMap[countryName];
+            if (isoCode) d3.select("#iso-" + isoCode).classed("active-country", true);
+        }
+
+        function drawFlows() {
+            const source = projection([-52, -15]);
+            const linesGroup = svgMap.append("g").attr("class", "lines-layer");
+            const particlesGroup = svgMap.append("g").attr("class", "particles-layer");
+            const labelsGroup = svgMap.append("g").attr("class", "labels-layer");
+            svgMap.append("circle").attr("cx", source[0]).attr("cy", source[1]).attr("r", 15).attr("class", "source-circle");
+            svgMap.append("text").attr("x", source[0]).attr("y", source[1] + 5).text("Brasil").attr("class", "source-label");
+            rankingData.slice(1).forEach((d, i) => {
+                const target = projection(d.coords);
+                if (!target) return;
+                const safeId = d.country.replace(/\s+/g, '');
+                const gradId = `grad-${safeId}`;
+                const grad = defs.append("linearGradient").attr("id", gradId).attr("gradientUnits", "userSpaceOnUse").attr("x1", source[0]).attr("y1", source[1]).attr("x2", target[0]).attr("y2", target[1]);
+                grad.append("stop").attr("offset", "0%").attr("stop-color", "#009739");
+                grad.append("stop").attr("offset", "100%").attr("stop-color", "#009739").attr("stop-opacity", 0.1);
+
+                const dx = target[0] - source[0], dy = target[1] - source[1], midX = (source[0] + target[0]) / 2, midY = (source[1] + target[1]) / 2;
+                let curveFactor = (d.country === "Argentina" || d.country === "Chile") ? 0.1 : 0.2;
+                const path = linesGroup.append("path").attr("id", `flow-${safeId}`).attr("class", "flow-line").attr("d", `M${source[0]},${source[1]} Q${midX - dy * curveFactor},${midY + dx * curveFactor} ${target[0]},${target[1]}`).style("stroke", `url(#${gradId})`).style("stroke-width", strokeScale(d.value));
+                const totalLength = path.node().getTotalLength();
+                path.attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).transition().duration(1500).delay(i * 150).ease(d3.easeCubicOut).attr("stroke-dashoffset", 0).on("end", function () {
+                    d3.select(this).attr("marker-end", "url(#arrow)");
+                    for (let j = 0; j < 3; j++) createParticle(path.node(), particlesGroup, safeId, j * 1000);
+                });
+
+                let labelX = target[0], labelY = target[1], textAnchor = "middle", offset = 15;
+                if (d.labelPos === "top") labelY -= offset; else if (d.labelPos === "bottom") labelY += offset + 10; else if (d.labelPos === "left") { labelX -= offset; textAnchor = "end"; } else { labelX += offset; textAnchor = "start"; }
+                const g = labelsGroup.append("g").attr("transform", `translate(${labelX}, ${labelY})`);
+                g.append("text").text(d.country).attr("class", "region-name").attr("text-anchor", textAnchor).transition().duration(500).delay(1500 + (i * 150)).style("opacity", 1);
+                g.append("text").text(`US$ ${d.value} bi`).attr("class", "region-value").attr("text-anchor", textAnchor).attr("y", 12).transition().duration(500).delay(1700 + (i * 150)).style("opacity", 1);
+            });
+        }
+
+        function createParticle(pathNode, container, id, initialDelay = 0) {
+            const particle = container.append("circle").attr("class", `particle particle-${id}`).attr("r", 1.8).attr("fill", "#ffffff").style("opacity", 0);
+            function animate() {
+                particle.transition().delay(initialDelay).duration(2500 + Math.random() * 1000).ease(d3.easeLinear).attrTween("transform", () => {
+                    const len = pathNode.getTotalLength();
+                    return (t) => { const point = pathNode.getPointAtLength(t * len); return `translate(${point.x}, ${point.y})`; };
+                }).style("opacity", 1).on("end", () => { initialDelay = 0; animate(); });
+            }
+            animate();
+        }
+
+        function highlightFlow(countryName) {
+            d3.selectAll(".flow-line").classed("highlight", false).classed("dimmed", countryName !== "Mundo");
+            d3.selectAll(".particle").style("opacity", countryName === "Mundo" ? 1 : 0.1);
+            if (countryName !== "Mundo") {
+                const safeId = countryName.replace(/\s+/g, '');
+                d3.select(`#flow-${safeId}`).classed("dimmed", false).classed("highlight", true);
+                d3.selectAll(`.particle-${safeId}`).style("opacity", 1);
+            }
+        }
+
+        function updateProductChart(countryName) {
+            const data = exportData[countryName] || [];
+            d3.select("#product-title").text(countryName === "Mundo" ? "Top 5 Commodities: Brasil" : `Top 5 Commodities: ${countryName}`);
+            const svg = d3.select("#product-svg");
+            svg.selectAll("*").remove();
+            const margin = { top: 20, right: 20, bottom: 40, left: 10 }, width = 340 - margin.left - margin.right, height = 300 - margin.top - margin.bottom;
+            const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+            const x = d3.scaleLinear().domain([0, d3.max(data, d => d.v)]).range([0, width]);
+            const y = d3.scaleBand().domain(data.map(d => d.p)).range([0, height]).padding(0.8);
+            const barGroups = g.selectAll(".bar-group").data(data).enter().append("g").attr("transform", d => `translate(0, ${y(d.p)})`);
+            barGroups.append("text").attr("class", "product-label").attr("y", -5).text((d, i) => `${i + 1}. ${d.p}`);
+            barGroups.append("rect").attr("class", "product-bar").attr("height", 8).transition().duration(600).attr("width", d => x(d.v));
+            barGroups.append("text").attr("class", "product-value").attr("y", 18).text(d => `US$ ${d.v} bn`);
+
+            barGroups.selectAll("rect")
+                .on("mouseover", (event, d) => {
+                    tooltip.style("visibility", "visible").html(`Exportação de <strong>${d.p}</strong>: <strong>$${d.v} bn</strong>`);
+                })
+                .on("mousemove", (event) => tooltip.style("top", (event.pageY - 10) + "px").style("left", (event.pageX + 10) + "px"))
+                .on("mouseout", () => tooltip.style("visibility", "hidden"));
+        }
+    </script>
+</body>
+
+</html>

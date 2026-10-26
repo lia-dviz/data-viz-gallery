@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UN's World Population Prospects</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chart-container {
+            background-color: #ffffff;
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            color: #1a2e46;
+            margin: 0 0 5px 0;
+            font-size: 28px;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-family: 'Roboto', sans-serif;
+            color: #55606e;
+            margin: 0 0 20px 0;
+            font-size: 16px;
+            max-width: 790px;
+            text-align: justify;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1;
+        }
+
+        .legend-box {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .axis-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            fill: #333;
+        }
+
+        .country-label,
+        .value-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            pointer-events: none;
+        }
+
+        .country-label {
+            font-weight: 600;
+            fill: #1a2e46;
+        }
+
+        .value-label {
+            font-weight: 400;
+            fill: #1a2e46;
+        }
+
+        .growth-tooltip {
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .growth-bg {
+            fill: white;
+            stroke: #eee;
+            stroke-width: 1px;
+        }
+
+        .growth-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            fill: #27ae60;
+        }
+
+        .link,
+        .node-group {
+            transition: opacity 0.3s;
+        }
+
+        .footer {
+            font-family: 'Roboto', sans-serif;
+            margin-top: 20px;
+            font-size: 11px;
+            color: #777;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            line-height: 1.5;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .made-by {
+            font-weight: 500;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="chart-container">
+        <h1>UN's World Population Prospects</h1>
+        <h2>The UN's World Population Prospects 2024 confirms India has surpassed China as the world's most populous
+            nation (2023), with a significant continental shift underway as India's growth slows and China's declines,
+            while African nations like Nigeria and Pakistan rise, pointing to future demographic power shifting towards
+            Africa and away from East Asia, with global population growth set to peak and eventually decline.</h2>
+        <div class="legend" id="legend"></div>
+        <div id="chart"></div>
+        <div class="footer">
+            <span>* UN population estimates are based on today's borders.<br>Source: United Nations | World Population
+                Prospects 2024</span>
+            <span class="made-by">Made by Lia</span>
+        </div>
+    </div>
+
+    <script>
+        const countryToIso = {
+            "China": "cn", "India": "in", "U.S.": "us", "Russia": "ru",
+            "Japan": "jp", "Germany": "de", "Indonesia": "id", "Brazil": "br",
+            "UK": "gb", "Italy": "it", "Pakistan": "pk", "Nigeria": "ng",
+            "Bangladesh": "bd", "DRC": "cd", "Ethiopia": "et", "Tanzania": "tz"
+        };
+
+        const data1950 = [
+            { rank: 1, country: "China", value: "544M", continent: "Asia", raw: 544 },
+            { rank: 2, country: "India", value: "346M", continent: "Asia", raw: 346 },
+            { rank: 3, country: "U.S.", value: "154M", continent: "Americas", raw: 154 },
+            { rank: 4, country: "Russia", value: "103M", continent: "Europe", raw: 103 },
+            { rank: 5, country: "Japan", value: "86M", continent: "Asia", raw: 86 },
+            { rank: 6, country: "Germany", value: "70M", continent: "Europe", raw: 70 },
+            { rank: 7, country: "Indonesia", value: "69M", continent: "Asia", raw: 69 },
+            { rank: 8, country: "Brazil", value: "53M", continent: "Americas", raw: 53 },
+            { rank: 9, country: "UK", value: "50M", continent: "Europe", raw: 50 },
+            { rank: 10, country: "Italy", value: "46M", continent: "Europe", raw: 46 }
+        ];
+
+        const data2025 = [
+            { rank: 1, country: "India", value: "1,464M", continent: "Asia", raw: 1464 },
+            { rank: 2, country: "China", value: "1,416M", continent: "Asia", raw: 1416 },
+            { rank: 3, country: "U.S.", value: "347M", continent: "Americas", raw: 347 },
+            { rank: 4, country: "Indonesia", value: "286M", continent: "Asia", raw: 286 },
+            { rank: 5, country: "Pakistan", value: "255M", continent: "Asia", raw: 255 },
+            { rank: 6, country: "Nigeria", value: "238M", continent: "Africa", raw: 238 },
+            { rank: 7, country: "Brazil", value: "213M", continent: "Americas", raw: 213 },
+            { rank: 8, country: "Bangladesh", value: "176M", continent: "Asia", raw: 176 },
+            { rank: 9, country: "Russia", value: "144M", continent: "Europe", raw: 144 },
+            { rank: 10, country: "Ethiopia", value: "135M", continent: "Africa", raw: 135 }
+        ];
+
+        const data2100 = [
+            { rank: 1, country: "India", value: "1,505M", continent: "Asia", raw: 1505 },
+            { rank: 2, country: "China", value: "633M", continent: "Asia", raw: 633 },
+            { rank: 3, country: "Pakistan", value: "511M", continent: "Asia", raw: 511 },
+            { rank: 4, country: "Nigeria", value: "477M", continent: "Africa", raw: 477 },
+            { rank: 5, country: "DRC", value: "431M", continent: "Africa", raw: 431 },
+            { rank: 6, country: "U.S.", value: "421M", continent: "Americas", raw: 421 },
+            { rank: 7, country: "Ethiopia", value: "367M", continent: "Africa", raw: 367 },
+            { rank: 8, country: "Indonesia", value: "296M", continent: "Asia", raw: 296 },
+            { rank: 9, country: "Tanzania", value: "263M", continent: "Africa", raw: 263 },
+            { rank: 10, country: "Bangladesh", value: "209M", continent: "Asia", raw: 209 }
+        ];
+
+        const colors = { "Asia": "#d65f5f", "Americas": "#6baed6", "Europe": "#f4d35e", "Africa": "#a6d96a" };
+
+        const legendContainer = d3.select("#legend");
+        Object.keys(colors).forEach(key => {
+            const item = legendContainer.append("div").attr("class", "legend-item");
+            item.append("div").attr("class", "legend-box").style("background-color", colors[key]);
+            item.append("span").text(key);
+        });
+
+        const margin = { top: 40, right: 10, bottom: 20, left: 10 };
+        const width = 800 - margin.left - margin.right;
+        const height = 500 - margin.top - margin.bottom;
+        const nodeWidth = 190;
+        const nodeHeight = 32;
+        const gapY = 12;
+
+        const svg = d3.select("#chart").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+        const colX = { 1950: 0, 2025: width / 2 - nodeWidth / 2, 2100: width - nodeWidth };
+
+        [1950, 2025, 2100].forEach(year => {
+            svg.append("text").attr("x", colX[year] + nodeWidth / 2).attr("y", -15)
+                .attr("class", "axis-label").attr("text-anchor", "middle").text(year);
+        });
+
+        function getLinks(sourceData, targetData, x1, x2) {
+            const links = [];
+            sourceData.forEach(s => {
+                const target = targetData.find(t => t.country === s.country);
+                if (target) links.push({ country: s.country, source: s, target: target, x1, x2, continent: s.continent });
+            });
+            return links;
+        }
+
+        const allLinks = [...getLinks(data1950, data2025, colX[1950] + nodeWidth, colX[2025]), ...getLinks(data2025, data2100, colX[2025] + nodeWidth, colX[2100])];
+        const linkGenerator = d3.linkHorizontal().x(d => d[0]).y(d => d[1]);
+
+        svg.selectAll(".link").data(allLinks).enter().append("path").attr("class", "link")
+            .attr("d", d => {
+                const y1 = (d.source.rank - 1) * (nodeHeight + gapY) + nodeHeight / 2;
+                const y2 = (d.target.rank - 1) * (nodeHeight + gapY) + nodeHeight / 2;
+                return linkGenerator({ source: [d.x1, y1], target: [d.x2, y2] });
+            })
+            .attr("stroke", d => colors[d.continent]).attr("stroke-width", nodeHeight).attr("fill", "none").attr("data-country", d => d.country);
+
+        function drawColumn(data, xPos, nextData) {
+            const nodes = svg.selectAll(`.node-${xPos}`).data(data).enter().append("g")
+                .attr("class", "node-group").attr("data-country", d => d.country)
+                .attr("transform", (d, i) => `translate(${xPos}, ${i * (nodeHeight + gapY)})`)
+                .on("mouseover", function (event, d) {
+                    svg.selectAll(".node-group, .link").style("opacity", 0.1);
+                    svg.selectAll(`[data-country="${d.country}"]`).style("opacity", 1);
+                    d3.selectAll(`[data-tooltip="${d.country}"]`).style("opacity", 1);
+                })
+                .on("mouseout", function () {
+                    svg.selectAll(".node-group, .link").style("opacity", 1);
+                    d3.selectAll(".growth-tooltip").style("opacity", 0);
+                });
+
+            nodes.append("rect").attr("width", nodeWidth).attr("height", nodeHeight).attr("fill", d => colors[d.continent]);
+            nodes.append("image").attr("xlink:href", d => `https://flagcdn.com/w40/${countryToIso[d.country] || "un"}.png`)
+                .attr("x", 8).attr("y", 8).attr("width", 20).attr("height", 16);
+            nodes.append("text").attr("x", 36).attr("y", nodeHeight / 2 + 5).attr("class", "country-label").text(d => d.country);
+            nodes.append("text").attr("x", nodeWidth - 10).attr("y", nodeHeight / 2 + 5).attr("class", "value-label").attr("text-anchor", "end").text(d => d.value);
+
+            if (nextData) {
+                nodes.each(function (d) {
+                    const target = nextData.find(t => t.country === d.country);
+                    if (target && target.raw > d.raw) {
+                        const diff = target.raw - d.raw;
+                        const perc = ((diff / d.raw) * 100).toFixed(0);
+                        const label = `+${diff}M (${perc}%)`;
+
+                        const tooltip = d3.select(this).append("g")
+                            .attr("class", "growth-tooltip")
+                            .attr("data-tooltip", d.country)
+                            .attr("transform", `translate(${nodeWidth + 8}, 4)`);
+
+                        tooltip.append("rect")
+                            .attr("class", "growth-bg")
+                            .attr("width", label.length * 7 + 10)
+                            .attr("height", 24)
+                            .attr("y", -2);
+
+                        tooltip.append("text")
+                            .attr("class", "growth-text")
+                            .attr("x", 5)
+                            .attr("y", 14)
+                            .text(label);
+                    }
+                });
+            }
+        }
+
+        drawColumn(data1950, colX[1950], data2025);
+        drawColumn(data2025, colX[2025], data2100);
+        drawColumn(data2100, colX[2100], null);
+    </script>
+</body>
+
+</html>

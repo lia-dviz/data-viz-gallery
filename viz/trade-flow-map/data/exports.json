@@ -1,0 +1,108 @@
+{
+  "year": 2026,
+  "exportData": {
+    "Mundo": [
+      { "p": "Óleos brutos de petróleo", "v": 51.49 },
+      { "p": "Soja", "v": 46.02 },
+      { "p": "Minério de ferro", "v": 22.18 },
+      { "p": "Óleos combustíveis", "v": 12.32 },
+      { "p": "Carne bovina congelada", "v": 12.13 }
+    ],
+    "China": [
+      { "p": "Soja", "v": 32.18 },
+      { "p": "Óleos brutos de petróleo", "v": 24.42 },
+      { "p": "Minério de ferro", "v": 15.08 },
+      { "p": "Carne bovina congelada", "v": 5.8 },
+      { "p": "Celulose", "v": 3.38 }
+    ],
+    "Estados Unidos": [
+      { "p": "Óleos brutos de petróleo", "v": 3.84 },
+      { "p": "Aeronaves", "v": 2.23 },
+      { "p": "Aço semi-acabado", "v": 2.2 },
+      { "p": "Óleos combustíveis", "v": 1.79 },
+      { "p": "Carne bovina congelada", "v": 1.74 }
+    ],
+    "Argentina": [
+      { "p": "Automóveis", "v": 2.35 },
+      { "p": "Autopeças", "v": 0.97 },
+      { "p": "Veículos de carga", "v": 0.7 },
+      { "p": "Tratores", "v": 0.47 },
+      { "p": "Energia elétrica", "v": 0.39 }
+    ],
+    "Holanda": [
+      { "p": "Óleos brutos de petróleo", "v": 3.71 },
+      { "p": "Soja", "v": 0.99 },
+      { "p": "Farelo de soja", "v": 0.7 },
+      { "p": "Celulose", "v": 0.58 },
+      { "p": "Ferroligas", "v": 0.5 }
+    ],
+    "Índia": [
+      { "p": "Óleos brutos de petróleo", "v": 3.54 },
+      { "p": "Óleo de soja", "v": 1.76 },
+      { "p": "Minério de cobre", "v": 1.04 },
+      { "p": "Açúcares", "v": 0.69 },
+      { "p": "Minério de ferro", "v": 0.5 }
+    ],
+    "Espanha": [
+      { "p": "Óleos brutos de petróleo", "v": 2.67 },
+      { "p": "Soja", "v": 1.93 },
+      { "p": "Minério de cobre", "v": 0.74 },
+      { "p": "Farelo de soja", "v": 0.53 },
+      { "p": "Milho", "v": 0.36 }
+    ],
+    "México": [
+      { "p": "Soja", "v": 0.83 },
+      { "p": "Automóveis", "v": 0.5 },
+      { "p": "Carne de aves", "v": 0.48 },
+      { "p": "Veículos de carga", "v": 0.43 },
+      { "p": "Carne bovina congelada", "v": 0.42 }
+    ],
+    "Cingapura": [
+      { "p": "Óleos combustíveis", "v": 3.62 },
+      { "p": "Óleos brutos de petróleo", "v": 1.05 },
+      { "p": "Bombas e compressores", "v": 0.42 },
+      { "p": "Carne de aves", "v": 0.26 },
+      { "p": "Ferroligas", "v": 0.22 }
+    ],
+    "Canadá": [
+      { "p": "Ouro", "v": 3.43 },
+      { "p": "Óxido de alumínio", "v": 0.95 },
+      { "p": "Açúcares", "v": 0.32 },
+      { "p": "Café", "v": 0.21 },
+      { "p": "Aeronaves", "v": 0.13 }
+    ],
+    "Chile": [
+      { "p": "Óleos brutos de petróleo", "v": 1.55 },
+      { "p": "Carne bovina fresca", "v": 0.64 },
+      { "p": "Veículos de carga", "v": 0.31 },
+      { "p": "Carne suína", "v": 0.23 },
+      { "p": "Carne bovina congelada", "v": 0.21 }
+    ]
+  },
+  "rankingData": [
+    { "rank": "", "country": "Mundo", "value": 321.9, "trend": "", "flag": "un", "color": "#004b23" },
+    { "rank": 1, "country": "China", "value": 93.1, "trend": "-7%", "flag": "cn", "color": "#ff4500", "coords": [105, 35], "labelPos": "right" },
+    { "rank": 2, "country": "Estados Unidos", "value": 31.7, "trend": "-16%", "flag": "us", "color": "#005a87", "coords": [-100, 40], "labelPos": "neutral" },
+    { "rank": 3, "country": "Argentina", "value": 13.1, "trend": "-28%", "flag": "ar", "color": "#6ec6ff", "coords": [-65, -34], "labelPos": "neutral" },
+    { "rank": 4, "country": "Holanda", "value": 11.8, "trend": "+1%", "flag": "nl", "color": "#ff9f43", "coords": [5.3, 52.1], "labelPos": "top" },
+    { "rank": 5, "country": "Índia", "value": 9.7, "trend": "+42%", "flag": "in", "color": "#ff9f43", "coords": [78.9, 20.6], "labelPos": "left" },
+    { "rank": 6, "country": "Espanha", "value": 8.5, "trend": "-3%", "flag": "es", "color": "#ff9f43", "coords": [-3.7, 40.4], "labelPos": "left" },
+    { "rank": 7, "country": "México", "value": 7.3, "trend": "-6%", "flag": "mx", "color": "#ff9f43", "coords": [-102, 23], "labelPos": "left" },
+    { "rank": 8, "country": "Cingapura", "value": 6.5, "trend": "-12%", "flag": "sg", "color": "#ff9f43", "coords": [103.8, 1.3], "labelPos": "bottom" },
+    { "rank": 9, "country": "Canadá", "value": 6.4, "trend": "-12%", "flag": "ca", "color": "#ff9f43", "coords": [-106, 56], "labelPos": "top" },
+    { "rank": 10, "country": "Chile", "value": 6.2, "trend": "-13%", "flag": "cl", "color": "#ff9f43", "coords": [-71, -33], "labelPos": "left" }
+  ],
+  "isoMap": {
+    "Brasil": "076",
+    "China": "156",
+    "Estados Unidos": "840",
+    "Argentina": "032",
+    "Holanda": "528",
+    "Índia": "356",
+    "Espanha": "724",
+    "México": "484",
+    "Cingapura": "702",
+    "Canadá": "124",
+    "Chile": "152"
+  }
+}

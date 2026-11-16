@@ -1,0 +1,394 @@
+body {
+    margin: 0;
+    font-family: 'Noto Sans JP', sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #f4f4f4;
+    overflow: hidden;
+}
+
+.main-header {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px 20px;
+    border-bottom: 2px solid #eee;
+    background-color: #ffffff;
+    color: #000000;
+    z-index: 10;
+}
+
+.header-info h1 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-family: "Roboto", sans-serif;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+.title-black {
+    color: #000000;
+    display: block;
+}
+
+.title-green {
+    color: #009739;
+    display: block;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.header-logo {
+    height: 45px;
+    width: auto;
+    object-fit: contain;
+}
+
+.header-logo.error {
+    display: none;
+}
+
+.content-wrapper {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 380px;
+    background-color: white;
+    padding: 12px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.05);
+    overflow-y: auto;
+    z-index: 5;
+}
+
+.card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+h3.chart-title {
+    font-size: 13px;
+    color: #444;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    font-weight: 800;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 8px;
+}
+
+.chart-instruction {
+    font-size: 11px;
+    color: #777;
+    margin-top: -5px;
+    margin-bottom: 10px;
+    font-style: italic;
+    line-height: 1.2;
+    padding-left: 2px;
+}
+
+.ranking-unit-info {
+    font-size: 10px;
+    color: #666;
+    margin-top: -5px; margin-bottom: 10px;
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.ranking-table tr {
+    border-bottom: 1px solid #f0f0f0;
+    transition: 0.2s;
+}
+
+.ranking-table tr.hidden-row {
+    display: none;
+}
+
+.ranking-table tr.selected:not(.row-fixed-style) {
+    background-color: #e8f5e9;
+    border-left: 4px solid #009739;
+}
+
+.ranking-table td {
+    padding: 8px 4px;
+    vertical-align: middle;
+}
+
+.row-fixed-style {
+    background-color: #e8f5e9 !important;
+    border-left: 4px solid #004b23 !important;
+}
+
+.expand-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    color: #004b23;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    text-transform: uppercase;
+    background: #f9f9f9;
+    border: none;
+    border-top: 1px solid #eee;
+    margin-top: -5px; margin-bottom: 10px;
+}
+
+.rank-num {
+    color: #ff6b6b;
+    font-weight: bold;
+    width: 15px;
+}
+
+.flag-icon {
+    width: 20px;
+    height: 14px;
+    margin-right: 5px;
+    vertical-align: middle;
+    border: 1px solid #eee;
+}
+
+.bar-container {
+    width: 80px;
+    background: #eee;
+    height: 10px;
+    display: inline-block;
+    border-radius: 2px;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.bar-fill {
+    height: 100%;
+    display: block;
+}
+
+.val-text {
+    font-weight: bold;
+    color: #333;
+    margin-left: 4px;
+}
+
+.trend-up {
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+.trend-neutral {
+    color: #b0bec5;
+}
+
+.trend-down {
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+#chart-container {
+    flex-grow: 1;
+    background-color: #eef1f3;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.country {
+    fill: #ffffff;
+    stroke: #eeeeee;
+    stroke-width: 1px;
+    transition: fill 0.3s ease;
+}
+
+.country.active-country {
+    fill: #dadada !important;
+    stroke: #fff;
+    stroke-width: 1.5px;
+}
+
+.flow-line {
+    fill: none;
+    stroke-linecap: round;
+    opacity: 0.6;
+}
+
+.flow-line.dimmed {
+    opacity: 0.05;
+    transition: 0.4s;
+}
+
+.flow-line.highlight {
+    opacity: 1;
+    stroke-width: 5px !important;
+    transition: 0.4s;
+}
+
+.particle {
+    fill: #fff;
+    pointer-events: none;
+}
+
+.source-circle {
+    fill: #009739;
+    stroke: rgba(0, 151, 57, 0.3);
+    stroke-width: 10px;
+}
+
+.source-label {
+    fill: white;
+    font-weight: bold;
+    font-size: 13px;
+    text-anchor: middle;
+    pointer-events: none;
+}
+
+.region-name {
+    font-size: 11px;
+    font-weight: bold;
+    fill: #333;
+    text-shadow: 1px 1px 0 #fff;
+    opacity: 0;
+}
+
+.region-value {
+    font-size: 10px;
+    fill: #004b23;
+    font-weight: bold;
+    text-shadow: 1px 1px 0 #fff;
+    opacity: 0;
+}
+
+.product-bar {
+    fill: #009739;
+    cursor: pointer;
+}
+
+.product-label {
+    font-size: 11px;
+    fill: #444;
+    font-weight: 700;
+}
+
+.product-value {
+    font-size: 10px;
+    fill: #666;
+    font-weight: 500;
+}
+
+.chart-footer {
+    font-size: 10px;
+    color: #888;
+    margin-top: 15px;
+    line-height: 1.4;
+}
+
+.chart-footer a {
+    color: #888;
+    text-decoration: underline;
+}
+
+#tooltip {
+    position: absolute;
+    visibility: hidden;
+    background: #ffffff;
+    border: none;
+    border-left: 3px solid #009739;
+    padding: 10px 12px;
+    font-size: 11px;
+    color: #2d3748;
+    border-radius: 0px;
+    pointer-events: none;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    max-width: 260px;
+    line-height: 1.4;
+}
+
+.products-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    border: 1px solid #e2ece6;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.products-table thead th {
+    background-color: #eaf3ed;
+    color: #2f4f3e;
+    font-weight: 700;
+    padding: 8px 6px;
+    text-align: center;
+    border-bottom: 1px solid #d5e5dc;
+    line-height: 1.2;
+}
+
+.products-table thead th:first-child {
+    text-align: left;
+    padding-left: 10px;
+}
+
+.products-table tbody tr {
+    border-bottom: 1px solid #eef2f0;
+    background-color: #ffffff;
+    transition: background-color 0.15s ease;
+}
+
+.products-table tbody tr:hover {
+    background-color: #f7fbf8;
+}
+
+.products-table tbody td {
+    padding: 7px 6px;
+    vertical-align: middle;
+}
+
+.product-cell-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.product-icon-svg {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+.product-name-text {
+    color: #333;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.product-num-val {
+    text-align: center;
+    color: #2b6cb0;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.product-share-val {
+    text-align: center;
+    color: #2b6cb0;
+    font-weight: 700;
+    white-space: nowrap;
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panorama das Exportações</title>
+    <link rel="icon" type="image/png" href="img/icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div id="tooltip"></div>
+    <header class="main-header">
+        <div class="header-info">
+            <h1>
+                <span class="title-black">Panorama de</span>
+                <span class="title-green">Exportações</span>
+            </h1>
+        </div>
+        <div class="logo-container"></div>
+    </header>
+    <div class="content-wrapper">
+        <aside class="sidebar">
+            <div class="card">
+                <h3 class="chart-title">Principais Destinos de Exportação</h3>
+                <div class="ranking-unit-info">Valores em US$ Bilhões</div>
+                <div id="ranking-container"></div>
+            </div>
+            <div id="product-chart-container" class="card">
+                <p class="chart-instruction">Selecione um país na lista para ver os principais produtos:</p>
+                <div id="product-table-container"></div>
+                <footer class="chart-footer">
+                    Fonte: Comex Stat, Exportações 2025–2026, by <a href="https://github.com/lia-dviz" target="_blank">lia-dviz</a>
+                </footer>
+            </div>
+        </aside>
+        <main id="chart-container"></main>
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

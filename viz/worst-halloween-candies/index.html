@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chocolate vs. non-chocolate candy</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <main class="container">
+    <h1 id="title">
+      <button type="button" class="filter-toggle active" data-group="chocolate">Chocolate</button>
+      vs.
+      <button type="button" class="filter-toggle active" data-group="non-chocolate">non-chocolate</button>
+      candy
+    </h1>
+    <p class="subtitle">Circles are sized by price percentile, so larger circles means more expensive.</p>
+    <div class="search-box">
+      <input id="candy-search" type="search" placeholder="Candy name..." autocomplete="off" aria-expanded="false" aria-controls="search-results">
+      <ul id="search-results" class="search-results" role="listbox" hidden></ul>
+    </div>
+    <p id="summary"></p>
+    <div id="chart"></div>
+  </main>
+  <div id="tooltip" class="tooltip" hidden></div>
+  <script src="js/chart.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Radial Knowledge Atlas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="tooltip" id="tooltip"></div>
+
+  <aside class="side-note">
+    <span class="badge">D3.js + HTML5 Canvas</span>
+    <h1>Radial Knowledge Atlas</h1>
+    <p>
+      This visualization maps the hierarchical structure of global research output across concentric rings:
+      from <strong>domains</strong> (on the left) to <strong>fields</strong>, <strong>subfields</strong>, and
+      <strong>specific topics</strong> along the outer edges.
+    </p>
+    <p>
+      Each circle's radius reflects the volume of indexed publications, while curved bundles reveal
+      how disciplines branch out.
+    </p>
+    <div class="meta" id="status-text">
+      Loading data from the OpenAlex API...
+    </div>
+    <button id="reset-btn">Clear filter</button>
+  </aside>
+
+  <canvas id="chart"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="main.js"></script>
+</body>
+</html>

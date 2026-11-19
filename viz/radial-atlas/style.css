@@ -1,0 +1,98 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #fcfcfb;
+  color: #222;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+  cursor: crosshair;
+}
+
+.side-note {
+  position: fixed;
+  top: 32px;
+  right: 32px;
+  width: 300px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 20px 22px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  font-size: 13px;
+  line-height: 1.55;
+  color: #444;
+}
+
+.side-note h1 {
+  margin: 0 0 8px 0;
+  font-size: 15px;
+  font-weight: 650;
+  color: #111;
+  letter-spacing: -0.01em;
+}
+
+.side-note p {
+  margin: 0 0 12px 0;
+}
+
+.side-note .meta {
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  font-size: 11.5px;
+  color: #666;
+}
+
+.side-note .badge {
+  display: inline-block;
+  background: #f0f0ee;
+  color: #333;
+  padding: 2px 7px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  font-size: 11px;
+}
+
+.side-note button {
+  margin-top: 8px;
+  background: #18181b;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  font-size: 11.5px;
+  cursor: pointer;
+  display: none;
+}
+
+.side-note button.visible {
+  display: inline-block;
+}
+
+.tooltip {
+  position: fixed;
+  pointer-events: none;
+  background: #ffffff;
+  color: #18181b;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 8px 12px;
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  transition: opacity 0.1s ease;
+  max-width: 240px;
+  z-index: 10;
+}
+
+.tooltip .sub {
+  color: #666;
+  font-size: 11px;
+}

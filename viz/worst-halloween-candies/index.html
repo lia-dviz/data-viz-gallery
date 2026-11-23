@@ -9,6 +9,7 @@
 </head>
 <body>
   <main class="container">
+    <p class="credit">Based on the visualization by Dataflow.</p>
     <h1 id="title">
       <button type="button" class="filter-toggle active" data-group="chocolate">Chocolate</button>
       vs.
@@ -22,6 +23,23 @@
     </div>
     <p id="summary"></p>
     <div id="chart"></div>
+    <section id="sentiment-section" class="sentiment-section">
+      <h2 class="sentiment-title">Joy, despair, and meh correlated with winning</h2>
+      <p class="sentiment-subtitle">Higher win rate means more joy and less despair.</p>
+      <p class="sentiment-intro">Comparing each candy's win percentage against how often respondents chose joy, despair, or meh shows how strongly positive and negative reactions track with overall popularity.</p>
+      <div id="sentiment-charts" class="sentiment-grid"></div>
+    </section>
+    <footer class="credits-footer">
+      <p class="credits-label">Made by:</p>
+      <div class="credits-avatars">
+        <a href="https://github.com/lia-dviz" target="_blank" rel="noopener noreferrer" aria-label="lia-dviz GitHub profile">
+          <img src="https://github.com/lia-dviz.png" alt="lia-dviz GitHub avatar" class="avatar">
+        </a>
+        <a href="https://github.com/juli-ss" target="_blank" rel="noopener noreferrer" aria-label="coauthor-handle GitHub profile">
+          <img src="https://github.com/juli-ss.png" alt="coauthor-handle GitHub avatar" class="avatar">
+        </a>
+      </div>
+    </footer>
   </main>
   <div id="tooltip" class="tooltip" hidden></div>
   <script src="js/chart.js"></script>
